@@ -1,0 +1,33 @@
+name = "dual-custody"
+uuid = "cage_ec02f0c700ab"
+app_uuid = "app_80eeb9f27e5b"
+team_uuid = "eefa0c67dcb9"
+debug = true
+dockerfile = "./Dockerfile"
+api_key_auth = true
+trx_logging = true
+disable_tls_termination = false
+forward_proxy_protocol = false
+trusted_headers = []
+
+[egress]
+enabled = true
+destinations = ["sepolia.infura.io"]
+
+[scaling]
+desired_replicas = 1
+
+[signing]
+certPath = "./cert.pem"
+keyPath = "./key.pem"
+
+[attestation]
+HashAlgorithm = "Sha384 { ... }"
+PCR0 = "b636c4421c5fabd3fa5ea8a94f3c29e652ff4099b6a6f3f4b4b52e369df05493eb424ed7f553ae26b6a8f1564f833bf3"
+PCR1 = "bcdf05fefccaa8e55bf2c8d6dee9e79bbff31e34bf28a99aa19e6b29c37ee80b214a414b7607236edf26fcb78654e63f"
+PCR2 = "9a5131ef863bfd7b6ee592d05bfb2069d85566e115da2b3cae7fa56a0e903508d3d9f2f80ec3d2307c8da56573ccdc8e"
+PCR8 = "a9e454447479505a278b88d11a94bef0708133f0189b58aaa8e8635871963f6d9d022f22c9e052ce6a0885add31d029c"
+
+[runtime]
+data_plane_version = "0.0.44"
+installer_version = "b8073166b7c5bc8fe2abf192f66e1106f2d4be547b1841be69f95ff2c4ea578c"
