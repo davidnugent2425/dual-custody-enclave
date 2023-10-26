@@ -41,10 +41,23 @@ def generate_wallet():
     # Extract the encrypted data from the response
     encrypted_data = encryption_response.json()
 
-    # Construct a response dictionary
+    # Prepare the data to be sent to the Replit backend server
+    backend_payload = {
+        'ethereum_address': eth_address,
+        'encrypted_base64_part': encrypted_data.get('base64_parts')[0]  # Send the first encrypted base64 part
+    }
+
+    # Send a POST request to the Replit backend server
+    backend_response = requests.post('https://dual-custody-backend.davidnugent2425.repl.co/store_shard', json=backend_payload)
+
+    # Check for a successful response from the Replit backend server
+    if backend_response.status_code != 200:
+        return jsonify(error="Backend server failed"), 500
+
+    # Construct a response dictionary to be sent back to the user
     response = {
         'encrypted_private_key': encrypted_data.get('private_key'),
-        'encrypted_base64_parts': encrypted_data.get('base64_parts'),
+        'encrypted_base64_part': encrypted_data.get('base64_parts')[1],  # Send the second encrypted base64 part to the user
         'public_key': str(public_key),
         'ethereum_address': eth_address
     }

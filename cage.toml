@@ -12,7 +12,7 @@ trusted_headers = []
 
 [egress]
 enabled = true
-destinations = ["sepolia.infura.io"]
+destinations = ["sepolia.infura.io", "dual-custody-backend.davidnugent2425.repl.co"]
 
 [scaling]
 desired_replicas = 1
