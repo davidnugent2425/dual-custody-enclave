@@ -29,5 +29,5 @@ PCR2 = "9a5131ef863bfd7b6ee592d05bfb2069d85566e115da2b3cae7fa56a0e903508d3d9f2f8
 PCR8 = "a9e454447479505a278b88d11a94bef0708133f0189b58aaa8e8635871963f6d9d022f22c9e052ce6a0885add31d029c"
 
 [runtime]
-data_plane_version = "0.0.44"
+data_plane_version = "0.0.45"
 installer_version = "b8073166b7c5bc8fe2abf192f66e1106f2d4be547b1841be69f95ff2c4ea578c"
