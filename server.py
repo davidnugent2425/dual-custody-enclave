@@ -68,12 +68,36 @@ def generate_wallet():
 @app.route('/sign_transaction', methods=['POST'])
 def sign_transaction():
     data = request.json
-    base64_parts = data.get('base64_parts')
+    base64_part = data.get('base64_part')
     from_account = data.get('from_account')
     to_account = data.get('to_account')
 
-    # Convert the Base64 strings back to byte arrays
-    byte_parts = [base64.b64decode(base64_part.encode('utf-8')) for base64_part in base64_parts]
+    # Convert the Base64 string back to a byte array
+    byte_part = base64.b64decode(base64_part.encode('utf-8'))
+
+    # Get the Ethereum address from the 'from_account' field
+    ethereum_address = from_account
+
+    # Send a request to your backend to get the second shard
+    backend_url = 'https://dual-custody-backend.davidnugent2425.repl.co/get_shard'
+    params = {'ethereum_address': ethereum_address}
+    backend_response = requests.get(backend_url, params=params)
+
+    # Check for a successful response
+    if backend_response.status_code != 200:
+        return jsonify(error='Failed to retrieve the second shard from the backend'), 500
+
+    # Extract the second shard from the backend response
+    backend_data = backend_response.json()
+    second_base64_part = backend_data.get('encrypted_base64_part')
+    if not second_base64_part:
+        return jsonify(error='No second shard found for the given Ethereum address'), 404
+
+    # Convert the second Base64 string back to a byte array
+    second_byte_part = base64.b64decode(second_base64_part.encode('utf-8'))
+
+    # Combine the two shards to reconstruct the private key
+    byte_parts = [byte_part, second_byte_part]
     private_key = f'0x{combine(byte_parts).hex()}'
 
     try:
