@@ -93,8 +93,27 @@ def sign_transaction():
     if not second_base64_part:
         return jsonify(error='No second shard found for the given Ethereum address'), 404
 
-    # Convert the second Base64 string back to a byte array
-    second_byte_part = base64.b64decode(second_base64_part.encode('utf-8'))
+    # Prepare the data to be decrypted
+    decryption_payload = {
+        'encrypted_base64_part': second_base64_part
+    }
+
+    # Send a POST request to the decryption service
+    decryption_url = 'http://127.0.0.1:9999/decrypt'
+    decryption_response = requests.post(decryption_url, json=decryption_payload)
+
+    # Check for a successful response
+    if decryption_response.status_code != 200:
+        return jsonify(error="Decryption service failed"), 500
+
+    # Extract the decrypted data from the response
+    decrypted_data = decryption_response.json()
+    decrypted_base64_part = decrypted_data.get('decrypted_base64_part')
+    if not decrypted_base64_part:
+        return jsonify(error='Decryption failed'), 500
+
+    # Convert the decrypted Base64 string back to a byte array
+    second_byte_part = base64.b64decode(decrypted_base64_part.encode('utf-8'))
 
     # Combine the two shards to reconstruct the private key
     byte_parts = [byte_part, second_byte_part]
