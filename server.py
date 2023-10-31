@@ -95,7 +95,7 @@ def sign_transaction():
 
     # Prepare the data to be decrypted
     decryption_payload = {
-        'encrypted_base64_part': second_base64_part
+        'base64_part': second_base64_part
     }
 
     # Send a POST request to the decryption service
@@ -108,7 +108,7 @@ def sign_transaction():
 
     # Extract the decrypted data from the response
     decrypted_data = decryption_response.json()
-    decrypted_base64_part = decrypted_data.get('decrypted_base64_part')
+    decrypted_base64_part = decrypted_data.get('base64_part')
     if not decrypted_base64_part:
         return jsonify(error='Decryption failed'), 500
 
