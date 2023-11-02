@@ -1,0 +1,19 @@
+# Dependencies
+/node_modules
+
+# Packaging
+/dist
+/out
+/*.tar.gz
+/release
+
+# Debugging
+.nyc_output
+coverage
+/.nyc_output
+/coverage
+*.log
+
+# System Files
+.DS_Store
+Thumbs.db

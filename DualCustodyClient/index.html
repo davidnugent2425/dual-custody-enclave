@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Ethereum Wallet Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <input type="text" id="apiKey" placeholder="Enter API Key here">
+    <button onclick="generateWallet()">Generate Ethereum Wallet</button>
+    <div id="result"></div>
+    <input type="text" id="base64Part" placeholder="Enter Base64 Part here">
+    <input type="text" id="fromAccount" placeholder="Enter From Account here">
+    <input type="text" id="toAccount" placeholder="Enter To Account here">
+    <button onclick="signTransaction()">Sign Transaction</button>
+    <div id="transactionResult"></div>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

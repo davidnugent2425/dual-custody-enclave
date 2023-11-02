@@ -1,0 +1,22 @@
+{
+  "name": "dualcustodyclient",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^27.0.2",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "@evervault/sdk": "^4.3.0",
+    "auth0-js": "^9.23.2",
+    "path": "^0.12.7"
+  }
+}

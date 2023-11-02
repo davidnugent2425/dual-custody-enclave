@@ -1,0 +1,22 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  #app {
+    max-width: 500px;
+    margin: auto;
+  }
+  
+  input, button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  #result {
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  

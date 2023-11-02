@@ -1,0 +1,14 @@
+appId: com.davidnugent.dual-custody
+productName: DualCustodyClient
+directories:
+  output: "dist"
+  buildResources: "build"
+mac:
+  category: "public.app-category.utilities"
+  target:
+    - "dmg"
+  protocols:
+    - name: "dual-custody"
+      schemes:
+        - "dual-custody"
+afterPack: "scripts/after-pack.js"
