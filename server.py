@@ -114,22 +114,23 @@ def generate_wallet(received_token, decoded_token):
     return jsonify(response)
 
 @app.route('/sign_transaction', methods=['POST'])
-def sign_transaction():
+@require_jwt
+def sign_transaction(received_token, decoded_token):
     data = request.json
     base64_part = data.get('base64_part')
-    from_account = data.get('from_account')
-    to_account = data.get('to_account')
+    from_account = decoded_token['from_account']
+    to_account = decoded_token['to_account']
 
     # Convert the Base64 string back to a byte array
     byte_part = base64.b64decode(base64_part.encode('utf-8'))
 
-    # Get the Ethereum address from the 'from_account' field
-    ethereum_address = from_account
+    headers = {
+        'Authorization': f'Bearer {received_token}'
+    }
 
     # Send a request to your backend to get the second shard
     backend_url = 'https://dual-custody-backend.davidnugent2425.repl.co/get_shard'
-    params = {'ethereum_address': ethereum_address}
-    backend_response = requests.get(backend_url, params=params)
+    backend_response = requests.get(backend_url, headers=headers)
 
     # Check for a successful response
     if backend_response.status_code != 200:
