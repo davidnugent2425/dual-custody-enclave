@@ -5,15 +5,54 @@ from pyshamir import split, combine
 from web3 import Web3, exceptions
 import base64
 import requests
+from jose import jwt, JWTError
+import base64
+from functools import wraps
 
 infura_api_key = os.environ.get('INFURA_API_KEY')
 infura_url = f'https://sepolia.infura.io/v3/{infura_api_key}' 
 web3 = Web3(Web3.HTTPProvider(infura_url))  
 
+base64_public_key = os.environ.get('TOKEN_SIGNING_PUBLIC_KEY')
+if base64_public_key is None:
+    raise ValueError("Public key is not set in the environment variable.")
+# Decode the base64-encoded public key
+token_signing_public_key = base64.b64decode(base64_public_key).decode('utf-8')
+
+class JWTValidationError(Exception):
+    pass
+
 app = Flask(__name__)
 
+def validate_and_decode_jwt(token):
+    try:
+        decoded_jwt = jwt.decode(token, token_signing_public_key, algorithms=['RS256'])
+        return token, decoded_jwt
+    except JWTError as e:
+        raise JWTValidationError(f'Invalid JWT: {str(e)}')
+
+def require_jwt(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({'error': 'Invalid Authorization header format'}), 401
+
+        token = auth_header[7:]
+
+        try:
+            token, decoded_jwt = validate_and_decode_jwt(token)
+        except JWTValidationError as e:
+            return jsonify({'error': str(e)}), 401
+
+        return f(token, decoded_jwt, *args, **kwargs)
+
+    return decorated_function
+
 @app.route('/generate_wallet', methods=['GET'])
-def generate_wallet():
+@require_jwt
+def generate_wallet(received_token, decoded_token):
     # Generate a random private key
     private_key = keys.PrivateKey(os.urandom(32))
     public_key = private_key.public_key
@@ -43,12 +82,21 @@ def generate_wallet():
 
     # Prepare the data to be sent to the Replit backend server
     backend_payload = {
+        'user_email': decoded_token['email'],
         'ethereum_address': eth_address,
         'encrypted_base64_part': encrypted_data.get('base64_parts')[0]  # Send the first encrypted base64 part
     }
 
+    headers = {
+        'Authorization': f'Bearer {received_token}'
+    }
+
     # Send a POST request to the Replit backend server
-    backend_response = requests.post('https://dual-custody-backend.davidnugent2425.repl.co/store_shard', json=backend_payload)
+    backend_response = requests.post(
+        'https://dual-custody-backend.davidnugent2425.repl.co/store_shard',
+        json=backend_payload,
+        headers=headers
+    )
 
     # Check for a successful response from the Replit backend server
     if backend_response.status_code != 200:
