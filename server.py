@@ -132,6 +132,7 @@ def sign_transaction(double_signed_token, decoded_token):
     base64_part = data.get('base64_part')
     from_account = decoded_token['from_account']
     to_account = decoded_token['to_account']
+    amount = decoded_token['amount']
 
     # Convert the Base64 string back to a byte array
     byte_part = base64.b64decode(base64_part.encode('utf-8'))
@@ -196,7 +197,7 @@ def sign_transaction(double_signed_token, decoded_token):
         'nonce': nonce,
         'from': from_account,
         'to': to_account,
-        'value': web3.to_wei(0.01, 'ether'),
+        'value': web3.to_wei(amount, 'ether'),
         'maxFeePerGas': web3.to_wei('250', 'gwei'),
         'maxPriorityFeePerGas': web3.to_wei('3', 'gwei'),
         'chainId': 11155111
