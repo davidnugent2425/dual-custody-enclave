@@ -14,23 +14,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy Cage and Capture PCR Values
-        env:
-          EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_CAGE_DEPLOY_PERMISSION }}
-          EV_CAGE_SIGNING_CERT: ${{ secrets.EV_CAGE_SIGNING_CERT }}
-          EV_CAGE_SIGNING_KEY: ${{ secrets.EV_CAGE_SIGNING_KEY }}
+      - name: Create Sample JSON
         run: |
-          curl https://cage-build-assets.evervault.com/cli/install -sL | sh
-          echo "$EV_CAGE_SIGNING_CERT" > cert.pem
-          echo "$EV_CAGE_SIGNING_KEY" > key.pem
-          ev-cage deploy | tee pcrs.json
-      - name: Add Timestamp to PCR JSON
+          echo '{"sample": "data"}' > sample.json
+
+      - name: Add Action URL to JSON
         run: |
-          CURRENT_TIMESTAMP=$(date +%s)
-          jq --arg ts "$CURRENT_TIMESTAMP" '. + {timestamp: ($ts | tonumber | todate)}' pcrs.json > temp_pcrs.json && mv temp_pcrs.json pcrs.json
-      - name: Deploy to Gist
-        uses: exuanbo/actions-deploy-gist@v1
-        with:
-          token: ${{ secrets.GIST_TOKEN }}
-          gist_id: 237cde6d019338712c1b8075e614a94d
-          file_path: pcrs.json
+          WORKFLOW_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          jq --arg url "$WORKFLOW_URL" '. + {action_url: $url}' sample.json > sample_with_url.json
+
+      - name: Print Result
+        run: cat sample_with_url.json
+      # - name: Deploy Cage and Capture PCR Values
+      #   env:
+      #     EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_CAGE_DEPLOY_PERMISSION }}
+      #     EV_CAGE_SIGNING_CERT: ${{ secrets.EV_CAGE_SIGNING_CERT }}
+      #     EV_CAGE_SIGNING_KEY: ${{ secrets.EV_CAGE_SIGNING_KEY }}
+      #   run: |
+      #     curl https://cage-build-assets.evervault.com/cli/install -sL | sh
+      #     echo "$EV_CAGE_SIGNING_CERT" > cert.pem
+      #     echo "$EV_CAGE_SIGNING_KEY" > key.pem
+      #     ev-cage deploy | tee pcrs.json
+      # - name: Add Timestamp to PCR JSON
+      #   run: |
+      #     CURRENT_TIMESTAMP=$(date +%s)
+      #     jq --arg ts "$CURRENT_TIMESTAMP" '. + {timestamp: ($ts | tonumber | todate)}' pcrs.json > temp_pcrs.json && mv temp_pcrs.json pcrs.json
+      # - name: Deploy to Gist
+      #   uses: exuanbo/actions-deploy-gist@v1
+      #   with:
+      #     token: ${{ secrets.GIST_TOKEN }}
+      #     gist_id: 237cde6d019338712c1b8075e614a94d
+      #     file_path: pcrs.json
