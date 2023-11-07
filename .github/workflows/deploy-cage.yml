@@ -20,17 +20,12 @@ jobs:
           echo '{"sample": "data"}' > sample.json
           CURRENT_TIMESTAMP=$(date +%s)
           jq --arg ts "$CURRENT_TIMESTAMP" '. + {timestamp: ($ts | tonumber | todate)}' sample.json > sample_with_timestamp.json
-      - name: Update Gist with Timestamped JSON
-        env:
-          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
-        run: |
-          GIST_ID="237cde6d019338712c1b8075e614a94d"
-          FILE_NAME="pcrs.json"
-          JSON_CONTENT=$(jq -c . sample_with_timestamp.json)
-          curl -X PATCH \
-            -H "Authorization: Bearer $GIST_TOKEN" \
-            -d "{\"files\": {\"$FILE_NAME\": {\"content\": $JSON_CONTENT}}}" \
-            "https://api.github.com/gists/$GIST_ID"
+      - name: Deploy
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.GIST_TOKEN }}
+          gist_id: 237cde6d019338712c1b8075e614a94d
+          file_path: sample_with_timestamp.json
       # - name: Deploy Cage
       #   env:
       #     EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_CAGE_DEPLOY_PERMISSION }}
