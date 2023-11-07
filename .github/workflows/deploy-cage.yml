@@ -27,7 +27,7 @@ jobs:
       - name: Add Timestamp to PCR JSON
         run: |
           CURRENT_TIMESTAMP=$(date +%s)
-          jq --arg ts "$CURRENT_TIMESTAMP" '. + {timestamp: ($ts | tonumber | todate)}' -i pcrs.json
+          jq --arg ts "$CURRENT_TIMESTAMP" '. + {timestamp: ($ts | tonumber | todate)}' pcrs.json > temp_pcrs.json && mv temp_pcrs.json pcrs.json
       - name: Deploy to Gist
         uses: exuanbo/actions-deploy-gist@v1
         with:
