@@ -14,15 +14,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Create Sample JSON
+      # Add your other steps as necessary
+      - name: Create and Timestamp JSON
         run: |
           echo '{"sample": "data"}' > sample.json
-      - name: Add Timestamp to JSON
-        run: |
           CURRENT_TIMESTAMP=$(date +%s)
           jq --arg ts "$CURRENT_TIMESTAMP" '. + {timestamp: ($ts | tonumber | todate)}' sample.json > sample_with_timestamp.json
-      - name: Print Result
-        run: cat sample_with_timestamp.json
+      - name: Update Gist with Timestamped JSON
+        env:
+          GH_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: |
+          GIST_ID="237cde6d019338712c1b8075e614a94d"
+          FILE_NAME="pcrs.json"
+          JSON_CONTENT=$(cat sample_with_timestamp.json)
+          curl -X PATCH \
+            -H "Authorization: token $GH_TOKEN" \
+            -d "{\"files\": {\"$FILE_NAME\": {\"content\": $JSON_CONTENT}}}" \
+            "https://api.github.com/gists/$GIST_ID"
       # - name: Deploy Cage
       #   env:
       #     EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_CAGE_DEPLOY_PERMISSION }}
