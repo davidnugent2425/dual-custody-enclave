@@ -14,13 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy Cage
-        env:
-          EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_CAGE_DEPLOY_PERMISSION }}
-          EV_CAGE_SIGNING_CERT: ${{ secrets.EV_CAGE_SIGNING_CERT }}
-          EV_CAGE_SIGNING_KEY: ${{ secrets.EV_CAGE_SIGNING_KEY }}
+      - name: Create Sample JSON
         run: |
-          curl https://cage-build-assets.evervault.com/cli/install -sL | sh
-          echo "$EV_CAGE_SIGNING_CERT" > cert.pem
-          echo "$EV_CAGE_SIGNING_KEY" > key.pem
-          ev-cage deploy
+          echo '{"sample": "data"}' > sample.json
+      - name: Add Timestamp to JSON
+        run: |
+          CURRENT_TIMESTAMP=$(date +%s)
+          jq --arg ts "$CURRENT_TIMESTAMP" '. + {timestamp: ($ts | tonumber | todate)}' sample.json > sample_with_timestamp.json
+      - name: Print Result
+        run: cat sample_with_timestamp.json
+      # - name: Deploy Cage
+      #   env:
+      #     EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_CAGE_DEPLOY_PERMISSION }}
+      #     EV_CAGE_SIGNING_CERT: ${{ secrets.EV_CAGE_SIGNING_CERT }}
+      #     EV_CAGE_SIGNING_KEY: ${{ secrets.EV_CAGE_SIGNING_KEY }}
+      #   run: |
+      #     curl https://cage-build-assets.evervault.com/cli/install -sL | sh
+      #     echo "$EV_CAGE_SIGNING_CERT" > cert.pem
+      #     echo "$EV_CAGE_SIGNING_KEY" > key.pem
+      #     ev-cage deploy
