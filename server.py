@@ -19,15 +19,27 @@ if base64_public_key is None:
 # Decode the base64-encoded public key
 token_signing_public_key = base64.b64decode(base64_public_key).decode('utf-8')
 
+base64_cage_private_key = os.environ.get('CAGE_TOKEN_SIGNING_PRIVATE_KEY')
+if base64_cage_private_key is None:
+    raise ValueError("Cage private key is not set in the environment variable.")
+# Decode the base64-encoded public key
+cage_token_signing_private_key = base64.b64decode(base64_cage_private_key).decode('utf-8')
+
 class JWTValidationError(Exception):
     pass
 
 app = Flask(__name__)
 
-def validate_and_decode_jwt(token):
+def validate_and_double_sign_jwt(backend_signed_jwt):
     try:
-        decoded_jwt = jwt.decode(token, token_signing_public_key, algorithms=['RS256'])
-        return token, decoded_jwt
+        payload = {
+            'backend_signed_jwt': backend_signed_jwt,
+        }
+        double_signed_token = jwt.encode(payload, cage_token_signing_private_key, algorithm='RS256')
+
+        decoded_jwt = jwt.decode(backend_signed_jwt, token_signing_public_key, algorithms=['RS256'])
+
+        return double_signed_token, decoded_jwt
     except JWTError as e:
         raise JWTValidationError(f'Invalid JWT: {str(e)}')
 
@@ -42,7 +54,7 @@ def require_jwt(f):
         token = auth_header[7:]
 
         try:
-            token, decoded_jwt = validate_and_decode_jwt(token)
+            token, decoded_jwt = validate_and_double_sign_jwt(token)
         except JWTValidationError as e:
             return jsonify({'error': str(e)}), 401
 
@@ -52,7 +64,7 @@ def require_jwt(f):
 
 @app.route('/generate_wallet', methods=['GET'])
 @require_jwt
-def generate_wallet(received_token, decoded_token):
+def generate_wallet(double_signed_token, decoded_token):
     # Generate a random private key
     private_key = keys.PrivateKey(os.urandom(32))
     public_key = private_key.public_key
@@ -88,7 +100,7 @@ def generate_wallet(received_token, decoded_token):
     }
 
     headers = {
-        'Authorization': f'Bearer {received_token}'
+        'Authorization': f'Bearer {double_signed_token}'
     }
 
     # Send a POST request to the Replit backend server
@@ -115,7 +127,7 @@ def generate_wallet(received_token, decoded_token):
 
 @app.route('/sign_transaction', methods=['POST'])
 @require_jwt
-def sign_transaction(received_token, decoded_token):
+def sign_transaction(double_signed_token, decoded_token):
     data = request.json
     base64_part = data.get('base64_part')
     from_account = decoded_token['from_account']
@@ -125,7 +137,7 @@ def sign_transaction(received_token, decoded_token):
     byte_part = base64.b64decode(base64_part.encode('utf-8'))
 
     headers = {
-        'Authorization': f'Bearer {received_token}'
+        'Authorization': f'Bearer {double_signed_token}'
     }
 
     # Send a request to your backend to get the second shard
