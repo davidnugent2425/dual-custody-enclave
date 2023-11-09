@@ -82,8 +82,13 @@ def generate_wallet(double_signed_token, decoded_token):
         'base64_parts': base64_parts
     }
 
-    # Send a POST request to the encryption service
-    encryption_response = requests.post('http://127.0.0.1:9999/encrypt', json=encryption_payload)
+    # Assign data policy to data
+    headers = {
+        'X-Evervault-Data-Role': 'private-key-shares'
+    }
+
+    # Send a POST request to the encryption service with the headers
+    encryption_response = requests.post('http://127.0.0.1:9999/encrypt', json=encryption_payload, headers=headers)
 
     # Check for a successful response
     if encryption_response.status_code != 200:
