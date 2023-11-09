@@ -1,11 +1,36 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html>
 <head>
   <title>Login</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #app {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px; /* or any other height depending on your design */
+      width: 100%;
+      max-width: 340px; /* or any other width depending on your design */
+    }
+    #loginButton {
+      padding: 15px 30px;
+      font-size: 16px;
+      cursor: pointer;
+      /* Reuse button styles from styles.css and override as necessary */
+    }
+  </style>
 </head>
 <body>
-  <button id="loginButton">Login</button>
+  <div id="app">
+    <button id="loginButton">Login</button>
+  </div>
   <script src="login.js"></script>
 </body>
 </html>

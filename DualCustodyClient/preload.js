@@ -4,18 +4,19 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld(
     'electronAPIs', {
         generateWallet: async (apiKey) => {
-            return ipcRenderer.invoke('generate-wallet', apiKey);
+            return ipcRenderer.invoke('generate-wallet');
         },
-        signTransaction: async (base64Part, fromAccount, toAccount, apiKey) => {
-            return ipcRenderer.invoke('sign-transaction', { base64Part, fromAccount, toAccount, apiKey });
+        signTransaction: async (base64Part, fromAccount, toAccount, amount) => {
+            return ipcRenderer.invoke('sign-transaction', { base64Part, fromAccount, toAccount, amount });
         },
         initiateLogin: () => {
             ipcRenderer.send('initiate-login');
         },
-        listenForAuthCallback: (callback) => {
-            ipcRenderer.on('auth-callback', (event, url) => {
-                callback(url);
-            });
+        openExternal: (url) => {
+            ipcRenderer.send('open-external', url);
         },
+        storePcrs: (pcrs) => {
+            ipcRenderer.send('store-pcrs', pcrs);
+        }
     }
 );

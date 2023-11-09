@@ -7,14 +7,23 @@
 </head>
 <body>
   <div id="app">
-    <input type="text" id="apiKey" placeholder="Enter API Key here">
-    <button onclick="generateWallet()">Generate Ethereum Wallet</button>
+    <h2>Generate Wallet</h2>
+    <button onclick="generateWallet()">Generate</button>
     <div id="result"></div>
+    <h2>Sign Transaction</h2>
     <input type="text" id="base64Part" placeholder="Enter Base64 Part here">
     <input type="text" id="fromAccount" placeholder="Enter From Account here">
     <input type="text" id="toAccount" placeholder="Enter To Account here">
-    <button onclick="signTransaction()">Sign Transaction</button>
+    <input type="text" id="amount" placeholder="Enter Transfer Amount here">
+    <button onclick="signTransaction()">Sign</button>
     <div id="transactionResult"></div>
+    <!-- Add this section to your HTML file -->
+    <div id="cageMeasurements">
+      <h2>Current Cage Measurements</h2>
+      <div id="pcrValues"></div>
+      <div id="prettyTimestamp"></div>
+      <a href="" id="deploymentLink">Deployment</a>
+    </div>
   </div>
   <script src="renderer.js"></script>
 </body>

@@ -17,6 +17,8 @@
   "dependencies": {
     "@evervault/sdk": "^4.3.0",
     "auth0-js": "^9.23.2",
-    "path": "^0.12.7"
+    "electron-log": "^5.0.0",
+    "path": "^0.12.7",
+    "uuid": "^9.0.1"
   }
 }
