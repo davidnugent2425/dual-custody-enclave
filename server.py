@@ -99,7 +99,6 @@ def generate_wallet(double_signed_token, decoded_token):
 
     # Prepare the data to be sent to the Replit backend server
     backend_payload = {
-        'user_email': decoded_token['email'],
         'ethereum_address': eth_address,
         'encrypted_base64_part': encrypted_data.get('base64_parts')[0]  # Send the first encrypted base64 part
     }
