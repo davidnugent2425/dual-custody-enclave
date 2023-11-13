@@ -78,7 +78,6 @@ def generate_wallet(double_signed_token, decoded_token):
 
     # Prepare the data to be encrypted
     encryption_payload = {
-        'private_key': str(private_key),
         'base64_parts': base64_parts
     }
 
@@ -120,7 +119,6 @@ def generate_wallet(double_signed_token, decoded_token):
 
     # Construct a response dictionary to be sent back to the user
     response = {
-        'encrypted_private_key': encrypted_data.get('private_key'),
         'encrypted_base64_part': encrypted_data.get('base64_parts')[1],  # Send the second encrypted base64 part to the user
         'public_key': str(public_key),
         'ethereum_address': eth_address
