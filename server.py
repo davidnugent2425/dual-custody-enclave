@@ -119,7 +119,7 @@ def generate_wallet(double_signed_token, decoded_token):
 
     # Construct a response dictionary to be sent back to the user
     response = {
-        'encrypted_base64_part': encrypted_data.get('base64_parts')[1],  # Send the second encrypted base64 part to the user
+        'encrypted_share': encrypted_data.get('base64_parts')[1],  # Send the second encrypted base64 part to the user
         'public_key': str(public_key),
         'ethereum_address': eth_address
     }
