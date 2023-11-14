@@ -4,7 +4,6 @@ async function generateWallet() {
         const resultDiv = document.getElementById('result');
         // Set the result content.
         const resultContent = `
-            <div class="result-item"><strong>Encrypted Private Key:</strong> ${data.encrypted_private_key}</div>
             <div class="result-item"><strong>Encrypted Base64 Part:</strong> ${data.encrypted_base64_part}</div>
             <div class="result-item"><strong>Public Key:</strong> ${data.public_key}</div>
             <div class="result-item"><strong>Ethereum Address:</strong> ${data.ethereum_address}</div>
@@ -84,7 +83,6 @@ function displayCageMeasurements(data) {
         PCR2: data.measurements.PCR2,
         PCR8: data.measurements.PCR8
     };
-    console.log(pcrs);
     electronAPIs.storePcrs(pcrs);
 
     // Display pretty-printed timestamp

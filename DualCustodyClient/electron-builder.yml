@@ -7,6 +7,7 @@ mac:
   category: "public.app-category.utilities"
   target:
     - "dmg"
+  icon: "icons/dual-custody-logo.icns"
   protocols:
     - name: "dual-custody"
       schemes:

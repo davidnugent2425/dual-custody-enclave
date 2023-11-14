@@ -151,8 +151,6 @@ ipcMain.handle('generate-wallet', async () => {
         }
         const cageToken = await generateWalletToken();
 
-        log.info('Sending generate wallet request to cage', cageToken);
-
         const walletUrl = 'https://dual-custody-cage.app-80eeb9f27e5b.cages.evervault.com/generate_wallet';
         const walletHeaders = { 'Authorization': `Bearer ${cageToken}` };
 
@@ -171,7 +169,6 @@ ipcMain.handle('sign-transaction', async (event, { base64Part, fromAccount, toAc
         }
 
         const cageToken = await generateTransactionToken(fromAccount, toAccount, amount);
-        log.info('Sending transaction request to cage', cageToken);
 
         const transactionUrl = 'https://dual-custody-cage.app-80eeb9f27e5b.cages.evervault.com/sign_transaction';
         const transactionHeaders = {
