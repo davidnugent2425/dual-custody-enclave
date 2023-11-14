@@ -212,4 +212,4 @@ def sign_transaction(double_signed_token, decoded_token):
     return jsonify(transaction_hash=str(web3.to_hex(tx_hash)))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0')
