@@ -4,7 +4,7 @@ on:
       - .github/workflows/deploy-cage.yml
       - server.py
       - Dockerfile
-      - cage.toml
+      - enclave.toml
     branches:
       - master
 
@@ -20,10 +20,10 @@ jobs:
           EV_CAGE_SIGNING_CERT: ${{ secrets.EV_CAGE_SIGNING_CERT }}
           EV_CAGE_SIGNING_KEY: ${{ secrets.EV_CAGE_SIGNING_KEY }}
         run: |
-          curl https://cage-build-assets.evervault.com/cli/install -sL | sh
+          curl https://enclave-build-assets.evervault.com/cli/v1/install -sL | sh
           echo "$EV_CAGE_SIGNING_CERT" > cert.pem
           echo "$EV_CAGE_SIGNING_KEY" > key.pem
-          ev-cage deploy | tee pcrs.json
+          ev-enclave deploy | tee pcrs.json
       - name: Add Timestamp and Action URL to PCR JSON
         run: |
           CURRENT_TIMESTAMP=$(date +%s)
