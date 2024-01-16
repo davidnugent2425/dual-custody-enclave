@@ -59,12 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('https://gist.githubusercontent.com/davidnugent2425/237cde6d019338712c1b8075e614a94d/raw/pcrs.json')
       .then(response => response.json())
       .then(data => {
-        displayCageMeasurements(data);
+        displayEnclaveMeasurements(data);
       })
-      .catch(error => console.error('Error fetching cage measurements:', error));
+      .catch(error => console.error('Error fetching enclave measurements:', error));
   });
   
-function displayCageMeasurements(data) {
+function displayEnclaveMeasurements(data) {
     const pcrValuesElement = document.getElementById('pcrValues');
     const prettyTimestampElement = document.getElementById('prettyTimestamp');
     const deploymentLinkElement = document.getElementById('deploymentLink');

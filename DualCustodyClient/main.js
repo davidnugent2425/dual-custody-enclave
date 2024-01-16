@@ -3,7 +3,7 @@ const Evervault = require('@evervault/sdk');
 const evervault = new Evervault('app_hello', 'donal', { curve: 'prime256v1' });
 const log = require('electron-log');
 const { v4: uuidv4 } = require('uuid');
-global.isCagesConfigured = false; // flag to track if cages have been configured
+global.isEnclavesConfigured = false; // flag to track if enclaves have been configured
 
 let mainWindow;
 
@@ -93,7 +93,7 @@ function handleAuthCallback(urlStr) {
     }
 }
 
-async function configureCagesBeta(pcrValues) {
+async function configureEnclavesBeta(pcrValues) {
     const requiredPcrKeys = ['PCR0', 'PCR1', 'PCR2', 'PCR8'];
 
     // Validate that all required PCR keys are present
@@ -113,7 +113,7 @@ async function configureCagesBeta(pcrValues) {
         }
     });
 
-    global.isCagesConfigured = true; // Set flag to indicate cages are configured
+    global.isEnclavesConfigured = true; // Set flag to indicate enclaves are configured
 }
 
 // Electron app event handlers
@@ -134,22 +134,22 @@ ipcMain.on('open-external', (event, url) => {
 
 ipcMain.on('store-pcrs', async (event, pcrValues) => {
     try {
-        log.info('Storing PCRs and configuring cages');
-        await configureCagesBeta(pcrValues);
+        log.info('Storing PCRs and configuring enclaves');
+        await configureEnclavesBeta(pcrValues);
     } catch (error) {
-        log.error('Failed to configure cages with PCRs:', error);
+        log.error('Failed to configure enclaves with PCRs:', error);
     }
 });
 
 ipcMain.handle('generate-wallet', async () => {
     try {
-        if (!global.isCagesConfigured) {
-            throw new Error('Cages have not been configured yet. Please store PCR values first.');
+        if (!global.isEnclavesConfigured) {
+            throw new Error('Enclaves have not been configured yet. Please store PCR values first.');
         }
-        const cageToken = await generateWalletToken();
+        const enclaveToken = await generateWalletToken();
 
         const walletUrl = 'https://dual-custody-enclave.app-80eeb9f27e5b.enclave.evervault.com/generate_wallet';
-        const walletHeaders = { 'Authorization': `Bearer ${cageToken}` };
+        const walletHeaders = { 'Authorization': `Bearer ${enclaveToken}` };
 
         const walletResponse = await makeApiRequest(walletUrl, 'GET', walletHeaders);
         return walletResponse;
@@ -161,16 +161,16 @@ ipcMain.handle('generate-wallet', async () => {
 
 ipcMain.handle('sign-transaction', async (event, { base64Part, fromAccount, toAccount, amount }) => {
     try {
-        if (!global.isCagesConfigured) {
-            throw new Error('Cages have not been configured yet. Please store PCR values first.');
+        if (!global.isEnclavesConfigured) {
+            throw new Error('Enclaves have not been configured yet. Please store PCR values first.');
         }
 
-        const cageToken = await generateTransactionToken(fromAccount, toAccount, amount);
+        const enclaveToken = await generateTransactionToken(fromAccount, toAccount, amount);
 
         const transactionUrl = 'https://dual-custody-enclave.app-80eeb9f27e5b.enclave.evervault.com/sign_transaction';
         const transactionHeaders = {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${cageToken}`
+            'Authorization': `Bearer ${enclaveToken}`
         };
         const transactionResponse = await makeApiRequest(transactionUrl, 'POST', transactionHeaders, { base64_part: base64Part });
         return transactionResponse;
