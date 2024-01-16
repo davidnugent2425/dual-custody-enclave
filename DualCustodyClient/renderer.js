@@ -4,7 +4,7 @@ async function generateWallet() {
         const resultDiv = document.getElementById('result');
         // Set the result content.
         const resultContent = `
-            <div class="result-item"><strong>Encrypted Base64 Part:</strong> ${data.encrypted_base64_part}</div>
+            <div class="result-item"><strong>Encrypted Share:</strong> ${data.encrypted_share}</div>
             <div class="result-item"><strong>Public Key:</strong> ${data.public_key}</div>
             <div class="result-item"><strong>Ethereum Address:</strong> ${data.ethereum_address}</div>
         `;

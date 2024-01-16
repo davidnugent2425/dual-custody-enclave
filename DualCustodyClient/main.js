@@ -44,9 +44,6 @@ async function makeApiRequest(url, method, headers, body = null) {
             headers,
             ...(body && { body: JSON.stringify(body) })
         });
-        if (!response.ok) {
-            throw new Error(`Failed to make API request: ${response.statusText}`);
-        }
         return response.json();
     } catch (error) {
         log.error('Error during API request:', error);
@@ -64,7 +61,7 @@ function validateAccessToken() {
 
 async function generateWalletToken() {
     const accessToken = validateAccessToken();
-    const url = 'https://dual-custody-backend.davidnugent2425.repl.co/get-token/generate-wallet';
+    const url = 'https://dual-custody-backend-davidnugent2425.replit.app/get-token/generate-wallet';
     const headers = { 'Authorization': `Bearer ${accessToken}` };
 
     return makeApiRequest(url, 'GET', headers).then(data => data.jwt);
@@ -72,7 +69,7 @@ async function generateWalletToken() {
 
 async function generateTransactionToken(fromAccount, toAccount, amount) {
     const accessToken = validateAccessToken();
-    const url = 'https://dual-custody-backend.davidnugent2425.repl.co/get-token/transaction';
+    const url = 'https://dual-custody-backend-davidnugent2425.replit.app/get-token/transaction';
     const headers = {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
@@ -107,8 +104,8 @@ async function configureCagesBeta(pcrValues) {
     }
 
     // Explicitly set the necessary PCR values
-    await evervault.enableCagesBeta({
-        'dual-custody-cage': {
+    await evervault.enableEnclaves({
+        'dual-custody-enclave': {
             pcr0: pcrValues.PCR0,
             pcr1: pcrValues.PCR1,
             pcr2: pcrValues.PCR2,
@@ -151,7 +148,7 @@ ipcMain.handle('generate-wallet', async () => {
         }
         const cageToken = await generateWalletToken();
 
-        const walletUrl = 'https://dual-custody-cage.app-80eeb9f27e5b.cages.evervault.com/generate_wallet';
+        const walletUrl = 'https://dual-custody-enclave.app-80eeb9f27e5b.enclave.evervault.com/generate_wallet';
         const walletHeaders = { 'Authorization': `Bearer ${cageToken}` };
 
         const walletResponse = await makeApiRequest(walletUrl, 'GET', walletHeaders);
@@ -170,7 +167,7 @@ ipcMain.handle('sign-transaction', async (event, { base64Part, fromAccount, toAc
 
         const cageToken = await generateTransactionToken(fromAccount, toAccount, amount);
 
-        const transactionUrl = 'https://dual-custody-cage.app-80eeb9f27e5b.cages.evervault.com/sign_transaction';
+        const transactionUrl = 'https://dual-custody-enclave.app-80eeb9f27e5b.enclave.evervault.com/sign_transaction';
         const transactionHeaders = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${cageToken}`
