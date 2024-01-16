@@ -86,7 +86,7 @@ def generate_wallet(double_signed_token, decoded_token):
         'X-Evervault-Data-Role': 'private-key-shares'
     }
 
-    # Send a POST request to the encryption service with the headers
+    # Send a POST request to the encryption API with the headers
     encryption_response = requests.post('http://127.0.0.1:9999/encrypt', json=encryption_payload, headers=headers)
 
     # Check for a successful response
