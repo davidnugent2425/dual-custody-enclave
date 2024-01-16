@@ -1,7 +1,7 @@
 on:
   push:
     paths:
-      - .github/workflows/deploy-cage.yml
+      - .github/workflows/deploy-enclave.yml
       - server.py
       - Dockerfile
       - enclave.toml
@@ -16,13 +16,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy Enclave and Capture PCR Values
         env:
-          EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_CAGE_DEPLOY_PERMISSION }}
-          EV_CAGE_SIGNING_CERT: ${{ secrets.EV_CAGE_SIGNING_CERT }}
-          EV_CAGE_SIGNING_KEY: ${{ secrets.EV_CAGE_SIGNING_KEY }}
+          EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_ENCLAVE_DEPLOY_PERMISSION }}
+          EV_ENCLAVE_SIGNING_CERT: ${{ secrets.EV_ENCLAVE_SIGNING_CERT }}
+          EV_ENCLAVE_SIGNING_KEY: ${{ secrets.EV_ENCLAVE_SIGNING_KEY }}
         run: |
           curl https://enclave-build-assets.evervault.com/cli/v1/install -sL | sh
-          echo "$EV_CAGE_SIGNING_CERT" > cert.pem
-          echo "$EV_CAGE_SIGNING_KEY" > key.pem
+          echo "$EV_ENCLAVE_SIGNING_CERT" > cert.pem
+          echo "$EV_ENCLAVE_SIGNING_KEY" > key.pem
           ev-enclave deploy | tee pcrs.json
       - name: Add Timestamp and Action URL to PCR JSON
         run: |
