@@ -19,11 +19,11 @@ if base64_public_key is None:
 # Decode the base64-encoded public key
 token_signing_public_key = base64.b64decode(base64_public_key).decode('utf-8')
 
-base64_cage_private_key = os.environ.get('CAGE_TOKEN_SIGNING_PRIVATE_KEY')
-if base64_cage_private_key is None:
-    raise ValueError("Cage private key is not set in the environment variable.")
+base64_enclave_private_key = os.environ.get('ENCLAVE_TOKEN_SIGNING_PRIVATE_KEY')
+if base64_enclave_private_key is None:
+    raise ValueError("Enclave private key is not set in the environment variable.")
 # Decode the base64-encoded public key
-cage_token_signing_private_key = base64.b64decode(base64_cage_private_key).decode('utf-8')
+enclave_token_signing_private_key = base64.b64decode(base64_enclave_private_key).decode('utf-8')
 
 class JWTValidationError(Exception):
     pass
@@ -35,7 +35,7 @@ def validate_and_double_sign_jwt(backend_signed_jwt):
         payload = {
             'backend_signed_jwt': backend_signed_jwt,
         }
-        double_signed_token = jwt.encode(payload, cage_token_signing_private_key, algorithm='RS256')
+        double_signed_token = jwt.encode(payload, enclave_token_signing_private_key, algorithm='RS256')
 
         decoded_jwt = jwt.decode(backend_signed_jwt, token_signing_public_key, algorithms=['RS256'])
 

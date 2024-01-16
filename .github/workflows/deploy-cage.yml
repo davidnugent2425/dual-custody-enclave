@@ -8,13 +8,13 @@ on:
     branches:
       - master
 
-name: Deploy Cage
+name: Deploy Enclave
 jobs:
-  deploy-cage:
+  deploy-enclave:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy Cage and Capture PCR Values
+      - name: Deploy Enclave and Capture PCR Values
         env:
           EV_API_KEY: ${{ secrets.EV_API_KEY_WITH_CAGE_DEPLOY_PERMISSION }}
           EV_CAGE_SIGNING_CERT: ${{ secrets.EV_CAGE_SIGNING_CERT }}
