@@ -7,18 +7,18 @@ from replit import db
 
 TOKEN_SIGNING_PUBLIC_KEY = base64.b64decode(
     os.environ['TOKEN_SIGNING_PUBLIC_KEY']).decode('utf-8')
-CAGE_TOKEN_SIGNING_PUBLIC_KEY = base64.b64decode(
-    os.environ['CAGE_TOKEN_SIGNING_PUBLIC_KEY']).decode('utf-8')
+ENCLAVE_TOKEN_SIGNING_PUBLIC_KEY = base64.b64decode(
+    os.environ['ENCLAVE_TOKEN_SIGNING_PUBLIC_KEY']).decode('utf-8')
 
 class JWTValidationError(Exception):
   pass
 
 
 def validate_and_decode_double_signed_jwt(double_signed_jwt):
-  """Validates and decodes a double-signed JWT (self-signed and Cage-signed)."""
+  """Validates and decodes a double-signed JWT (self-signed and Enclave-signed)."""
   try:
     backend_signed_jwt = jwt.decode(double_signed_jwt,
-                                    CAGE_TOKEN_SIGNING_PUBLIC_KEY,
+                                    ENCLAVE_TOKEN_SIGNING_PUBLIC_KEY,
                                     algorithms=['RS256'])['backend_signed_jwt']
     return jwt.decode(backend_signed_jwt,
                       TOKEN_SIGNING_PUBLIC_KEY,
