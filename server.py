@@ -108,7 +108,7 @@ def generate_wallet(double_signed_token, decoded_token):
 
     # Send a POST request to the Replit backend server
     backend_response = requests.post(
-        'https://dual-custody-backend.davidnugent2425.repl.co/store_shard',
+        'https://dual-custody-backend-davidnugent2425.replit.app/store_shard',
         json=backend_payload,
         headers=headers
     )
@@ -144,7 +144,7 @@ def sign_transaction(double_signed_token, decoded_token):
     }
 
     # Send a request to your backend to get the second shard
-    backend_url = 'https://dual-custody-backend.davidnugent2425.repl.co/get_shard'
+    backend_url = 'https://dual-custody-backend-davidnugent2425.replit.app/get_shard'
     backend_response = requests.get(backend_url, headers=headers)
 
     # Check for a successful response
